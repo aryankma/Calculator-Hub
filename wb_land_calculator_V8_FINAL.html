@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#1f5f8b">
+<title>WB Land Calculator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f8;font-family:Arial,"Noto Sans Bengali",sans-serif;color:#17212b}
+.wrap{max-width:560px;margin:auto;padding:14px}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px #0001}
+h1{font-size:24px;margin:0 0 4px}.sub{color:#64727e;font-size:13px;margin-bottom:16px}
+.section{font-size:18px;font-weight:700;margin-bottom:11px}
+.menu{display:flex;flex-direction:column;gap:10px}
+.menu button{margin:0;text-align:left;background:#fff;color:#173f59;border:1px solid #d7e0e6}
+.menu button strong{display:block;font-size:16px;margin-bottom:3px}
+.menu button span{font-size:12px;color:#687783;font-weight:400}
+button{width:100%;border:0;border-radius:11px;padding:14px;font-size:16px;font-weight:700;background:#1f5f8b;color:#fff;margin-top:14px}
+button.secondary{background:#e8eef2;color:#1f4056}
+.back{background:#e8eef2;color:#1f4056;margin-top:0;margin-bottom:12px}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid #cbd5dc;border-radius:10px;font-size:17px;background:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.result{background:#f7fafb;border:1px solid #e0e7eb;border-radius:10px;padding:10px}
+.result small{display:block;color:#687783;font-size:12px;margin-bottom:4px}.result b{font-size:16px;word-break:break-word}
+.highlight{border:2px solid #1f5f8b;background:#eef7fc}
+.note{font-size:12px;color:#687783;line-height:1.55;margin-top:10px}
+.error{color:#b42318;font-size:13px;margin-top:8px}
+.hidden{display:none}
+.badge{display:inline-block;background:#eef7fc;border:1px solid #cfe2ed;border-radius:7px;padding:5px 8px;margin:2px;font-size:13px}
+footer{text-align:center;color:#71808b;font-size:11px;padding:4px 0 15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HOME -->
+<div id="home">
+  <div class="card">
+    <h1>West Bengal Land Calculator</h1>
+    <div class="sub">জমির মাপ, প্রচলিত একক ও অংশের হিসাব</div>
+    <div class="section">Calculator নির্বাচন করুন</div>
+    <div class="menu">
+      <button onclick="showPage('modern')">
+        <strong>1. জমির পরিমাণ — Modern Calculation</strong>
+        <span>Acre, Hectare, Bigha, Katha, Chhatak, Sq Ft, Sq Meter</span>
+      </button>
+      <button onclick="showPage('traditional')">
+        <strong>2. জমির পরিমাণ — Traditional Method</strong>
+        <span>আনা (আ), গণ্ডা (গ), কড়া (ক), ক্রান্তি (ক্রা)</span>
+      </button>
+      <button onclick="showPage('share')">
+        <strong>3. জমির অংশ — Share Calculation</strong>
+        <span>Modern land units থেকে অংশ, %, আনা, গণ্ডা, কড়া, ক্রান্তি</span>
+      </button>
+      <button onclick="showPage('all')">
+        <strong>4. সব Calculation এক জায়গায়</strong>
+        <span>আপনার বর্তমান All-in-One calculator</span>
+      </button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section">📝 Note</div>
+    <div class="note">
+      এই Calculator-এ West Bengal জমির মাপের জন্য নির্ধারিত reference conversion ব্যবহার করা হয়েছে। স্থানীয় দলিল, খতিয়ান বা সরকারি নথিতে কোনো ভিন্ন conversion উল্লেখ থাকলে সংশ্লিষ্ট নথির হিসাবকে অগ্রাধিকার দিন।
+    </div>
+  </div>
+
+</div>
+
+<!-- MODERN -->
+<div id="modern" class="hidden">
+  <button class="back" onclick="showPage('home')">← Home</button>
+  <div class="card">
+    <div class="section">জমির পরিমাণ — Modern Calculation</div>
+    <label>জমির পরিমাণ</label>
+    <div class="grid">
+      <input id="modernVal" type="number" step="any" value="" inputmode="decimal">
+      <select id="modernUnit">
+        <option value="acre">Acre</option><option value="hectare">Hectare</option>
+        <option value="decimal">Decimal / শতক</option><option value="bigha">Bigha</option>
+        <option value="katha">Katha</option><option value="chhatak">Chhatak</option>
+        <option value="sqft">Sq Ft</option><option value="sqm">Sq Meter</option>
+      </select>
+    </div>
+    <button onclick="modernCalc()">Calculate</button>
+    <button class="secondary" onclick="resetModern()">Reset</button>
+    <div id="modernError" class="error"></div>
+  </div>
+  <div class="card">
+    <div class="section">Conversion Result</div>
+    <div class="grid" id="modernResults"></div>
+  </div>
+</div>
+
+<!-- TRADITIONAL -->
+<div id="traditional" class="hidden">
+  <button class="back" onclick="showPage('home')">← Home</button>
+  <div class="card">
+    <div class="section">জমির পরিমাণ — Traditional Method</div>
+    <div class="note">এই calculator-এ traditional units-কে 16 আনা = 100% = 1 সম্পূর্ণ অংশ হিসেবে ধরা হয়েছে।</div>
+    <label>জমির ভাগ লিখুন</label>
+    <div class="grid">
+      <input id="tradAna" type="number" step="any" value="" inputmode="decimal" placeholder="আনা (আ)">
+      <input id="tradGonda" type="number" step="any" value="" inputmode="decimal" placeholder="গণ্ডা (গ)">
+      <input id="tradKora" type="number" step="any" value="" inputmode="decimal" placeholder="কড়া (ক)">
+      <input id="tradKranti" type="number" step="any" value="" inputmode="decimal" placeholder="ক্রান্তি (ক্রা)">
+    </div>
+    <div class="note">উদাহরণ: 3 আনা 6 গণ্ডা 2 কড়া 2 ক্রান্তি</div>
+    <button onclick="traditionalCalc()">Calculate</button>
+    <button class="secondary" onclick="resetTraditional()">Reset</button>
+    <div id="tradError" class="error"></div>
+  </div>
+  <div class="card">
+    <div class="section">Conversion Result</div>
+    <div class="grid" id="tradResults"></div>
+    <div class="note">
+      <span class="badge">আ = আনা</span><span class="badge">গ = গণ্ডা</span>
+      <span class="badge">ক = কড়া</span><span class="badge">ক্রা = ক্রান্তি</span>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE -->
+<div id="share" class="hidden">
+  <button class="back" onclick="showPage('home')">← Home</button>
+  <div class="card">
+    <div class="section">জমির অংশ — Share Calculation</div>
+    <label>মোট জমি</label>
+    <div class="grid">
+      <input id="shareTotal" type="number" step="any" value="" inputmode="decimal">
+      <select id="shareTotalUnit">
+        <option value="decimal">Decimal / শতক</option><option value="acre">Acre</option>
+        <option value="hectare">Hectare</option><option value="bigha">Bigha</option>
+        <option value="katha">Katha</option><option value="chhatak">Chhatak</option>
+        <option value="sqft">Sq Ft</option><option value="sqm">Sq Meter</option>
+      </select>
+    </div>
+    <label>আপনার জমি</label>
+    <div class="grid">
+      <input id="shareMine" type="number" step="any" value="" inputmode="decimal">
+      <select id="shareMineUnit">
+        <option value="decimal">Decimal / শতক</option><option value="acre">Acre</option>
+        <option value="hectare">Hectare</option><option value="bigha">Bigha</option>
+        <option value="katha">Katha</option><option value="chhatak">Chhatak</option>
+        <option value="sqft">Sq Ft</option><option value="sqm">Sq Meter</option>
+      </select>
+    </div>
+    <button onclick="shareCalc()">Calculate Share</button>
+    <button class="secondary" onclick="resetShare()">Reset</button>
+    <div id="shareError" class="error"></div>
+  </div>
+  <div class="card">
+    <div class="section">Share Result</div>
+    <div class="grid" id="shareResults"></div>
+  </div>
+</div>
+
+<!-- ALL IN ONE -->
+<div id="all" class="hidden">
+  <button class="back" onclick="showPage('home')">← Home</button>
+  <div class="card">
+    <h1>All-in-One Calculator</h1>
+    <div class="sub">Modern units + Share + Traditional units</div>
+    <div class="section">1. Land Measurement</div>
+    <label>Total Land <span style="font-weight:400;color:#687783">(as per ROR record)</span></label>
+    <div class="grid">
+      <input id="allTotal" type="number" step="any" value="" inputmode="decimal">
+      <select id="allTotalUnit">
+        <option value="decimal">Decimal / শতক</option><option value="acre">Acre</option><option value="hectare">Hectare</option>
+        <option value="bigha">Bigha</option><option value="katha">Katha</option><option value="chhatak">Chhatak</option><option value="sqft">Sq Ft</option><option value="sqm">Sq Meter</option>
+      </select>
+    </div>
+    <label>Your Land</label>
+    <div class="grid">
+      <input id="allMine" type="number" step="any" value="" inputmode="decimal">
+      <select id="allMineUnit">
+        <option value="decimal">Decimal / শতক</option><option value="acre">Acre</option><option value="hectare">Hectare</option>
+        <option value="bigha">Bigha</option><option value="katha">Katha</option><option value="chhatak">Chhatak</option><option value="sqft">Sq Ft</option><option value="sqm">Sq Meter</option>
+      </select>
+    </div>
+    <button onclick="allCalc()">Calculate Everything</button>
+    <button class="secondary" onclick="resetAll()">Reset</button>
+    <div id="allError" class="error"></div>
+  </div>
+  <div class="card"><div class="section">2. Your Land — Modern Units</div><div class="grid" id="allLandResults"></div></div>
+  <div class="card"><div class="section">3. Share / অংশ</div><div class="grid" id="allShareResults"></div></div>
+  
+  
+</div>
+
+<footer>WB Land Calculator • For calculation/reference use</footer>
+</div>
+
+<script>
+const U={acre:43560,decimal:435.6,hectare:43560/0.40468564224,bigha:14400,katha:720,chhatak:45,sqft:1,sqm:10.7639104167};
+const T={ana:240,gonda:12,kora:3,kranti:1}; // base = 1 kranti
+function fmt(n,d=8){return Number.isFinite(n)?n.toFixed(d).replace(/\.?0+$/,""):"—"}
+function sqft(v,u){return v*U[u]}
+function showPage(id){
+  ["home","modern","traditional","share","all"].forEach(x=>document.getElementById(x).classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+function modernCalc(){
+  const v=+modernVal.value,u=modernUnit.value,e=modernError;
+  e.textContent=""; if(!Number.isFinite(v)||v<0){e.textContent="Enter a valid value.";return}
+  const s=sqft(v,u);
+  const a=[["Acre",s/U.acre,10],["Hectare",s/U.hectare,10],["Decimal",s/U.decimal,8],["Bigha",s/U.bigha,8],["Katha",s/U.katha,8],["Chhatak",s/U.chhatak,8],["Sq Ft",s,2],["Sq Meter",s/U.sqm,8]];
+  modernResults.innerHTML=a.map(x=>`<div class="result"><small>${x[0]}</small><b>${fmt(x[1],x[2])}</b></div>`).join("");
+}
+function traditionalCalc(){
+  const ana=+document.getElementById("tradAna").value||0;
+  const gonda=+document.getElementById("tradGonda").value||0;
+  const kora=+document.getElementById("tradKora").value||0;
+  const kranti=+document.getElementById("tradKranti").value||0;
+  const e=document.getElementById("tradError"); e.textContent="";
+  if([ana,gonda,kora,kranti].some(x=>x<0)){e.textContent="Values cannot be negative.";return}
+  const totalKranti=ana*240+gonda*12+kora*3+kranti;
+  const nAna=Math.floor(totalKranti/240);
+  let rem=totalKranti%240;
+  const nGonda=Math.floor(rem/12); rem%=12;
+  const nKora=Math.floor(rem/3); const nKranti=rem%3;
+  const share=totalKranti/3840;
+  const a=[
+    ["Input",`${fmt(ana)} আ ${fmt(gonda)} গ ${fmt(kora)} ক ${fmt(kranti)} ক্রা`,8],
+    ["Share (Total = 1)",share,10],
+    ["Percentage",share*100,8," %"],
+    ["10,000 Share",share*10000,4],
+  ];
+  document.getElementById("tradResults").innerHTML=a.map(x=>`<div class="result"><small>${x[0]}</small><b>${x[1]}${x[3]||""}</b></div>`).join("");
+}
+function shareData(total,tu,mine,mu){
+  const ts=sqft(total,tu),ms=sqft(mine,mu),share=ms/ts,ana=share*16;
+  return {ts,ms,share,ana,dec:ms/U.decimal};
+}
+function shareCards(d){
+  return [
+    ["Share (Total = 1)",d.share,10],
+    ["Percentage",d.share*100,8," %"],
+    ["10,000 Share",d.share*10000,4],
+    ["Ana / আনা",d.ana,8],
+    ["Gonda / গণ্ডা",d.ana*20,8],
+    ["Kora / কড়া",d.ana*80,8],
+    ["Kranti / ক্রান্তি",d.ana*240,8]
+  ];
+}
+function shareCalc(){
+  const total=+shareTotal.value,mine=+shareMine.value,tu=shareTotalUnit.value,mu=shareMineUnit.value,e=shareError;e.textContent="";
+  if(!Number.isFinite(total)||!Number.isFinite(mine)||total<=0||mine<0){e.textContent="Enter valid land values.";return}
+  const d=shareData(total,tu,mine,mu); if(d.ms>d.ts){e.textContent="Your land cannot be greater than total land.";return}
+  shareResults.innerHTML=[
+    ["Share (Total = 1)",d.share,10],
+    ["Percentage",d.share*100,8," %"],
+    ["10,000 Share",d.share*10000,4]
+  ].map((x,i)=>`<div class="result ${i<2?"highlight":""}"><small>${x[0]}</small><b>${fmt(x[1],x[2])}${x[3]||""}</b></div>`).join("");
+}
+function allCalc(){
+  const total=+allTotal.value,mine=+allMine.value,tu=allTotalUnit.value,mu=allMineUnit.value,e=allError;e.textContent="";
+  if(!Number.isFinite(total)||!Number.isFinite(mine)||total<=0||mine<0){e.textContent="Enter valid land values.";return}
+  const d=shareData(total,tu,mine,mu); if(d.ms>d.ts){e.textContent="Your land cannot be greater than total land.";return}
+  const vals=[["Acre",d.ms/U.acre,10],["Hectare",d.ms/U.hectare,10],["Decimal",d.dec,8],["Bigha",d.ms/U.bigha,8],["Katha",d.ms/U.katha,8],["Chhatak",d.ms/U.chhatak,8],["Sq Ft",d.ms,2],["Sq Meter",d.ms/U.sqm,8]];
+  allLandResults.innerHTML=vals.map(x=>`<div class="result"><small>${x[0]}</small><b>${fmt(x[1],x[2])}</b></div>`).join("");
+  allShareResults.innerHTML=shareCards(d).map((x,i)=>`<div class="result ${i<2?"highlight":""}"><small>${x[0]}</small><b>${fmt(x[1],x[2])}${x[3]||""}</b></div>`).join("");
+  const tr=[["আনা (আ)",d.ana,8],["গণ্ডা (গ)",d.ana*20,8],["কড়া (ক)",d.ana*80,8],["ক্রান্তি (ক্রা)",d.ana*240,8]];
+  allTradResults.innerHTML=tr.map(x=>`<div class="result"><small>${x[0]}</small><b>${fmt(x[1],x[2])}</b></div>`).join("");
+}
+
+function resetModern(){
+  modernVal.value=""; modernError.textContent=""; modernResults.innerHTML="";
+}
+function resetTraditional(){
+  tradAna.value=""; tradGonda.value=""; tradKora.value=""; tradKranti.value="";
+  tradError.textContent=""; tradResults.innerHTML="";
+}
+function resetShare(){
+  shareTotal.value=""; shareMine.value=""; shareError.textContent=""; shareResults.innerHTML="";
+}
+function resetAll(){
+  allTotal.value=""; allMine.value=""; allError.textContent="";
+  allLandResults.innerHTML=""; allShareResults.innerHTML=""; allTradResults.innerHTML="";
+}
+
+</script>
+</body>
+</html>
