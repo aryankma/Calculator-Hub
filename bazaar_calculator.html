@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Calculator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef5ff 0%,#f8fbff 48%,#f1f8f4 100%);color:#222}
+.container{max-width:980px;margin:20px auto;padding:14px}
+.home-button{display:block;width:100%;margin:0 0 14px;padding:12px 16px;border:1px solid #d7e4f3;border-radius:12px;background:rgba(255,255,255,.85);color:#145a86;font-size:16px;font-weight:700;text-align:center;text-decoration:none}
+.card{background:rgba(255,255,255,.96);border-radius:24px;padding:22px;box-shadow:0 10px 35px rgba(31,60,136,.10);border:1px solid #e5edf6}
+.hero{background:linear-gradient(135deg,#1f3c88,#315bb4);color:#fff;border-radius:20px;padding:24px 20px;margin-bottom:20px;box-shadow:0 8px 22px rgba(31,60,136,.18)}
+h1{text-align:center;margin:0 0 7px;font-size:30px}
+.subtitle{text-align:center;color:#e5edff;margin:0;font-size:14px}
+.item{border:1px solid #dfe8f2;background:#fbfdff;border-radius:18px;padding:17px;margin-bottom:15px;box-shadow:0 4px 14px rgba(31,60,136,.05)}
+.item-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.item-icon{width:46px;height:46px;border-radius:14px;background:#eef4ff;display:flex;align-items:center;justify-content:center;font-size:25px;flex:0 0 46px;border:1px solid #dbe6f5}
+.item-title{font-size:14px;font-weight:800;color:#33415c}
+.grid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr 1fr 1fr;gap:12px;align-items:end}
+label{display:block;font-size:12px;font-weight:800;color:#526071;margin-bottom:6px}
+input,select{width:100%;padding:11px;border:1px solid #cfd9e5;border-radius:10px;font-size:15px;background:#fff;outline:none}
+input:focus,select:focus{border-color:#6f91d4;box-shadow:0 0 0 3px rgba(49,91,180,.10)}
+.itemResult{width:100%;padding:11px;border:1px solid #d9e4f4;border-radius:10px;font-size:15px;background:#eef4ff;color:#1f3c88;font-weight:bold;min-height:43px;display:flex;align-items:center}
+.remove{background:#fff0f1;color:#c6283d;border:1px solid #f2c4ca;border-radius:10px;padding:11px 15px;font-weight:bold;cursor:pointer;width:100%}
+.actions{display:flex;gap:10px;margin:16px 0 10px}
+.add{flex:1;background:#198754;color:#fff;border:0;border-radius:12px;padding:13px 15px;font-weight:bold;cursor:pointer;box-shadow:0 5px 12px rgba(25,135,84,.16)}
+.calculate{width:100%;background:#1f3c88;color:#fff;border:0;border-radius:12px;font-size:17px;padding:15px;margin-top:5px;font-weight:bold;cursor:pointer;box-shadow:0 6px 15px rgba(31,60,136,.18)}
+.results{display:none;margin-top:22px}
+.total-card{background:linear-gradient(135deg,#eef4ff,#f4f8ff);padding:22px;border-radius:18px;text-align:center;border:1px solid #dbe6f5}
+.total-card h3{font-size:14px;color:#5b6470;margin:0 0 7px}
+.total{font-size:32px;font-weight:bold;color:#1f3c88}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;margin-top:18px;overflow:hidden;border:1px solid #e0e7ef;border-radius:14px}
+th,td{padding:11px;border-bottom:1px solid #e5e9ef;text-align:center;font-size:13px}
+th{background:#1f3c88;color:white}
+tr:last-child td{border-bottom:0}
+.reset{width:100%;background:#fff;color:#5d6775;border:1px solid #cfd8e3;border-radius:12px;font-size:16px;padding:13px;margin-top:18px;font-weight:bold;cursor:pointer}
+.note{margin-top:14px;background:#fff9e8;border-left:4px solid #f2b400;padding:14px;font-size:12px;color:#555;border-radius:8px}
+@media(max-width:850px){
+ .grid{grid-template-columns:1.5fr 1fr 1fr}
+ .grid>div{grid-column:auto!important}
+ .grid .name{grid-column:1/-1!important}
+ .grid .remove-wrap{grid-column:1/-1!important}
+}
+@media(max-width:500px){
+ .container{padding:10px}
+ .card{padding:15px;border-radius:20px}
+ .hero{padding:20px 14px}
+ h1{font-size:24px}
+ .grid{grid-template-columns:1fr 1fr}
+ .grid .name{grid-column:1/-1!important}
+ .grid .remove-wrap{grid-column:1/-1!important}
+ .actions{display:block}.actions button{width:100%;margin-bottom:8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<a class="home-button" href="index.html">⌂ Home</a>
+
+<div class="card">
+<h1>🛒 Shopping Calculator</h1>
+<div class="subtitle">Calculate your market shopping total easily — kg, 100g, piece, dozen, litre and more.</div>
+
+<div id="itemList"></div>
+
+<div class="actions">
+<button class="add" onclick="addItem()">+ Add Another Item</button>
+</div>
+
+<button class="calculate" onclick="calculateTotal()">Calculate Total</button>
+
+<div class="results" id="results">
+<div class="total-card">
+<h3>Estimated Total</h3>
+<div class="total">₹ <span id="grandTotal">0.00</span></div>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Price</th>
+<th>Price Is For</th>
+<th>Quantity</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody id="resultBody"></tbody>
+</table>
+</div>
+
+<button class="reset" onclick="resetCalculator()">↻ Reset Shopping</button>
+
+<div class="note">
+<strong>How it works:</strong> Enter the market price, then specify exactly what quantity that price is for.
+For example, ₹20 for 100 gram: enter Price ₹20, Price Quantity 100, Price Unit Gram.
+Then enter how much you want to buy. For example, if potato is ₹40/kg and you buy 750 g,
+the calculator automatically calculates ₹30. If something is ₹8 per piece and you buy 6 pieces,
+it calculates ₹48.
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const unitGroups = {
+  weight: [
+    ["kg","Kilogram (kg)",1000],
+    ["g","Gram (g)",1],
+    ["mg","Milligram (mg)",0.001]
+  ],
+  volume: [
+    ["litre","Litre (L)",1000],
+    ["ml","Millilitre (ml)",1]
+  ],
+  count: [
+    ["piece","Piece",1]
+  ]
+};
+
+const priceUnits = [
+  ...unitGroups.weight,
+  ...unitGroups.volume,
+  ...unitGroups.count
+];
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g,m=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+function optionsHTML(){
+  return priceUnits.map(u=>`<option value="${u[0]}">${u[1]}</option>`).join("");
+}
+
+function getUnit(key){
+  return priceUnits.find(u=>u[0]===key);
+}
+
+function getGroup(key){
+  if(unitGroups.weight.some(u=>u[0]===key)) return "weight";
+  if(unitGroups.volume.some(u=>u[0]===key)) return "volume";
+  return "count";
+}
+
+function compatibleOptions(){
+  return priceUnits.map(u=>`<option value="${u[0]}">${u[1]}</option>`).join("");
+}
+
+function getItemIcon(name){
+  const n=name.toLowerCase();
+  const icons=[
+    [/apple|আপেল/,"🍎"],[/banana|কলা/,"🍌"],[/mango|আম/,"🥭"],[/orange|কমলা/,"🍊"],
+    [/grape|আঙুর/,"🍇"],[/watermelon|তরমুজ/,"🍉"],[/papaya|পেঁপে/,"🥭"],
+    [/potato|আলু/,"🥔"],[/tomato|টমেটো/,"🍅"],[/onion|পেঁয়াজ|peyaj/,"🧅"],
+    [/garlic|রসুন/,"🧄"],[/ginger|আদা/,"🫚"],[/carrot|গাজর/,"🥕"],
+    [/chilli|pepper|লঙ্কা|মরিচ/,"🌶️"],[/lemon|লেবু/,"🍋"],[/cabbage|বাঁধাকপি/,"🥬"],
+    [/cauliflower|ফুলকপি/,"🥦"],[/spinach|পালং/,"🥬"],[/cucumber|শসা/,"🥒"],
+    [/milk|দুধ/,"🥛"],[/egg|ডিম/,"🥚"],[/bread|পাউরুটি/,"🍞"],
+    [/rice|চাল/,"🍚"],[/fish|মাছ/,"🐟"],[/chicken|মুরগি/,"🍗"],
+    [/meat|mutton|মাংস/,"🥩"],[/biscuit|বিস্কুট/,"🍪"],[/soap|সাবান/,"🧼"],
+    [/shampoo|শ্যাম্পু/,"🧴"],[/oil|তেল/,"🫗"],[/water|জল|পানি/,"💧"],
+    [/sugar|চিনি/,"🧂"],[/salt|নুন|লবণ/,"🧂"],[/tea|চা/,"🍵"],[/coffee|কফি/,"☕"]
+  ];
+  for(const [rx,icon] of icons) if(rx.test(n)) return icon;
+  return "🛍️";
+}
+
+function updateItemIcon(input){
+  const box=input.closest(".item");
+  box.querySelector(".item-icon").textContent=getItemIcon(input.value);
+  box.querySelector(".item-title").textContent=input.value.trim() || "Shopping Item";
+}
+
+function addItem(){
+  const wrap=document.getElementById("itemList");
+  const box=document.createElement("div");
+  box.className="item";
+  box.innerHTML=`
+    <div class="item-head">
+      <div class="item-icon">🛍️</div>
+      <div class="item-title">Shopping Item</div>
+    </div>
+    <div class="grid">
+      <div class="name">
+        <label>Item / Product</label>
+        <input class="itemName" type="text" placeholder="e.g. Apple, Rice, Soap" oninput="updateItemIcon(this)">
+      </div>
+
+      <div>
+        <label>Market Price (₹)</label>
+        <input class="price" type="number" min="0" step="0.01" placeholder="e.g. 40">
+      </div>
+
+      <div>
+        <label>Price Quantity</label>
+        <input class="priceQuantity" type="number" min="0.001" step="0.001" value="1" placeholder="e.g. 100">
+      </div>
+
+      <div>
+        <label>Price Unit</label>
+        <select class="priceUnit" onchange="updateQuantityUnits(this)">
+          ${optionsHTML()}
+        </select>
+      </div>
+
+      <div>
+        <label>Quantity</label>
+        <input class="quantity" type="number" min="0" step="0.01" value="1">
+      </div>
+
+      <div>
+        <label>Quantity Unit</label>
+        <select class="quantityUnit"></select>
+      </div>
+
+      <div>
+        <label>Item Total</label>
+        <div class="itemResult">₹0.00</div>
+      </div>
+
+      <div class="remove-wrap">
+        <button class="remove" onclick="removeItem(this)">Remove</button>
+      </div>
+    </div>`;
+  wrap.appendChild(box);
+
+  const priceUnit=box.querySelector(".priceUnit");
+  priceUnit.value="kg";
+  updateQuantityUnits(priceUnit);
+  attachInstantCalculation(box);
+  updateItemResult(box);
+  updateItemIcon(box.querySelector(".itemName"));
+}
+
+function updateQuantityUnits(select){
+  const box=select.closest(".item");
+  const quantityUnit=box.querySelector(".quantityUnit");
+  quantityUnit.innerHTML=compatibleOptions();
+
+  const priceKey=select.value;
+  quantityUnit.value=priceKey;
+
+  updateItemResult(box);
+}
+
+function removeItem(btn){
+  const wrap=document.getElementById("itemList");
+  if(wrap.children.length>1) btn.closest(".item").remove();
+  else alert("At least one item is required.");
+}
+
+function calculateAmount(price, priceKey, quantity, quantityKey, priceQuantity=1){
+  const p=getUnit(priceKey);
+  const q=getUnit(quantityKey);
+
+  if(!p || !q) return 0;
+
+  const groupP=getGroup(priceKey);
+  const groupQ=getGroup(quantityKey);
+
+  if(groupP!==groupQ) return 0;
+
+  // Count-based units: piece/dozen/half-dozen
+  if(groupP==="count"){
+    return price * (q[2] * quantity) / (p[2] * priceQuantity);
+  }
+
+  // Weight/volume: convert both to base unit (gram/ml)
+  return price * (q[2] * quantity) / (p[2] * priceQuantity);
+}
+
+function updateItemResult(box){
+  const price=parseFloat(box.querySelector(".price").value);
+  const priceQuantity=parseFloat(box.querySelector(".priceQuantity").value);
+  const quantity=parseFloat(box.querySelector(".quantity").value);
+  const priceKey=box.querySelector(".priceUnit").value;
+  const quantityKey=box.querySelector(".quantityUnit").value;
+  const result=box.querySelector(".itemResult");
+
+  if(!Number.isFinite(price) || price<0 || !Number.isFinite(priceQuantity) || priceQuantity<=0 ||
+     !Number.isFinite(quantity) || quantity<=0){
+    result.textContent="₹0.00";
+    return 0;
+  }
+
+  const amount=calculateAmount(price,priceKey,quantity,quantityKey,priceQuantity);
+  result.textContent=`₹${amount.toFixed(2)}`;
+  return amount;
+}
+
+function attachInstantCalculation(box){
+  box.querySelectorAll("input,select").forEach(el=>{
+    el.addEventListener("input",()=>updateItemResult(box));
+    el.addEventListener("change",()=>updateItemResult(box));
+  });
+}
+
+function resetCalculator(){
+  const wrap=document.getElementById("itemList");
+  wrap.innerHTML="";
+  document.getElementById("results").style.display="none";
+  document.getElementById("resultBody").innerHTML="";
+  document.getElementById("grandTotal").textContent="0.00";
+  addItem();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function calculateTotal(){
+  let total=0;
+  let rows="";
+  let valid=true;
+
+  document.querySelectorAll(".item").forEach(box=>{
+    const name=box.querySelector(".itemName").value.trim() || "Unnamed Item";
+    const price=parseFloat(box.querySelector(".price").value);
+    const priceQuantity=parseFloat(box.querySelector(".priceQuantity").value);
+    const quantity=parseFloat(box.querySelector(".quantity").value);
+    const priceKey=box.querySelector(".priceUnit").value;
+    const quantityKey=box.querySelector(".quantityUnit").value;
+
+    if(!Number.isFinite(price) || price<0 || !Number.isFinite(priceQuantity) || priceQuantity<=0 ||
+       !Number.isFinite(quantity) || quantity<=0){
+      valid=false;
+      return;
+    }
+
+    const amount=calculateAmount(price,priceKey,quantity,quantityKey,priceQuantity);
+    total+=amount;
+    box.querySelector(".itemResult").textContent=`₹${amount.toFixed(2)}`;
+
+    const p=getUnit(priceKey);
+    const q=getUnit(quantityKey);
+
+    rows+=`<tr>
+      <td>${esc(name)}</td>
+      <td>₹${price.toFixed(2)}</td>
+      <td>${priceQuantity} ${esc(p[1])}</td>
+      <td>${quantity} ${esc(q[1])}</td>
+      <td><strong>₹${amount.toFixed(2)}</strong></td>
+    </tr>`;
+  });
+
+  if(!valid){
+    alert("Please enter a valid price and quantity for every item.");
+    return;
+  }
+
+  document.getElementById("grandTotal").textContent=total.toFixed(2);
+  document.getElementById("resultBody").innerHTML=rows;
+  document.getElementById("results").style.display="block";
+}
+
+addItem();
+</script>
+</body>
+</html>
