@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calculator Hub</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f3f6f8;
+    color:#17212b;
+}
+
+.container{
+    max-width:620px;
+    margin:auto;
+    padding:18px 14px 28px;
+}
+
+.card{
+    background:#fff;
+    border:1px solid #dfe8ef;
+    border-radius:22px;
+    padding:22px;
+    box-shadow:0 8px 28px rgba(31,95,139,.10);
+}
+
+.hero{
+    background:#1f5f8b;
+    color:#1f5f8b;
+    border-radius:28px;
+    padding:34px 22px 28px;
+    margin-bottom:18px;
+    border:1px solid #e2e9ee;
+    box-shadow:0 8px 28px rgba(31,95,139,.08);
+}
+
+.hero-top{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+}
+
+.hero-icon{
+    width:62px;
+    height:62px;
+    flex:0 0 62px;
+    border-radius:14px;
+    background:#f7f8f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:37px;
+}
+
+.hero-copy{min-width:0}
+
+h1{
+    margin:0;
+    color:#ffffff;
+    font-size:42px;
+    line-height:1.08;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+
+.subtitle{
+    text-align:center;
+    color:#e5f1f7;
+    margin:20px auto 0;
+    font-size:19px;
+    line-height:1.35;
+    max-width:540px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-decoration:none;
+    background:#f8fbfd;
+    color:#1f5f8b;
+    border:1px solid #d9e6ee;
+    padding:15px 16px;
+    border-radius:15px;
+    transition:.15s ease;
+}
+
+.menu a:hover{
+    background:#eef6fa;
+    border-color:#b9d2df;
+    transform:translateY(-1px);
+}
+
+.icon{
+    width:44px;
+    height:44px;
+    flex:0 0 44px;
+    border-radius:12px;
+    background:#e8f2f7;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+}
+
+.text{min-width:0}
+
+.title{
+    display:block;
+    font-size:17px;
+    font-weight:800;
+    color:#1f5f8b;
+    margin-bottom:4px;
+}
+
+.desc{
+    display:block;
+    font-size:12px;
+    line-height:1.4;
+    color:#687783;
+}
+
+.footer{
+    text-align:center;
+    color:#687783;
+    font-size:12px;
+    margin-top:20px;
+}
+
+@media(max-width:430px){
+    .container{padding:12px 10px 22px}
+    .card{padding:16px;border-radius:19px}
+    .hero{padding:28px 14px 23px;border-radius:22px}
+    .hero-top{gap:10px}
+    .hero-icon{width:50px;height:50px;flex-basis:50px;font-size:29px}
+    h1{font-size:29px}
+    .subtitle{font-size:14px;margin-top:14px}
+    .desktop-break{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="hero">
+    <div class="hero-top">
+        <div class="hero-icon">🧮</div>
+        <div class="hero-copy">
+            <h1>Calculator Hub</h1>
+        </div>
+    </div>
+    <p class="subtitle">
+        Useful calculators for land, electricity, date and other<br class="desktop-break">
+        everyday calculations
+    </p>
+</div>
+
+<div class="menu">
+
+<a href="land.html">
+    <div class="icon">🌾</div>
+    <div class="text">
+        <span class="title">Land Calculator (West Bengal)</span>
+        <span class="desc">Land measurement, unit conversion & land-share calculation</span>
+    </div>
+</a>
+
+<a href="date.html">
+    <div class="icon">📅</div>
+    <div class="text">
+        <span class="title">Date, Calendar & Age Calculator</span>
+        <span class="desc">Age, date difference and calendar calculations</span>
+    </div>
+</a>
+
+<a href="electricity_calculators.html">
+    <div class="icon">⚡</div>
+    <div class="text">
+        <span class="title">Electricity Calculator</span>
+        <span class="desc">CESC electricity bill & appliance-wise consumption</span>
+    </div>
+</a>
+
+<a href="bazaar_calculator.html">
+    <div class="icon">🛒</div>
+    <div class="text">
+        <span class="title">Shopping Calculator</span>
+        <span class="desc">Plan your shopping and calculate the total cost</span>
+    </div>
+</a>
+
+<a href="blood-pressure-calculator.html">
+    <div class="icon">🩺</div>
+    <div class="text">
+        <span class="title">Health and Wellness Calculator</span>
+        <span class="desc">Health-related calculators and wellness tools</span>
+    </div>
+</a>
+
+</div>
+
+<div class="footer">
+    Calculator Hub
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
